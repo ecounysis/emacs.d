@@ -1,0 +1,30 @@
+emacs notes
+-----------------------------------------
+C-a               beginning of line
+C-e               end of line
+C-x k             kill buffer
+C-x C-s           save buffer
+C-x C-f           find file
+C-x b             switch to buffer
+C-g               quit command
+C-<sdpace>         set the mark
+C-x C-x           exchange point and mark
+M-w               copy
+C-w               kill (cut)
+C-y               yank (paste)
+C-k               kill line from point to eol
+C-x u             undo
+<F4>              stop recording keyboard macro
+<F4>              execute keyboard macro
+C-n               next line
+C-p               previous line
+C-f               forward character
+C-b               back character
+M-n               next sentence
+M-p               previous sentence
+M-f               forward word
+M-b	          backward word    
+C-u n             execute next command n times
+
+(fset 'quotify
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("''," 0 "%d")) arg)))
