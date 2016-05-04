@@ -53,10 +53,9 @@
 
 
 ;; yay rainbows!
-(add-hook 'clojure-mode #'rainbow-delimiters-mode)
-(add-hook 'slime-mode  #'rainbow-delimiters-mode)
-(add-hook 'scheme-mode #'rainbow-delimiters-mode)
-(add-hook 'racket-mode #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+
 
 ;; use 2 spaces for tabs
 (defun die-tabs ()
