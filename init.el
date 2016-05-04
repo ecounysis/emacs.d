@@ -1,108 +1,148 @@
+;;;;
+;; Packages
+;;;;
+
+;; Define package repositories
 (require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+             '("tromey" . "http://tromey.com/elpa/") t)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+;; (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
+;;                          ("melpa" . "http://melpa-stable.milkbox.net/packages/")))
+
+
+;; Load and activate emacs packages. Do this first so that the
+;; packages are loaded before you start trying to modify them.
+;; This also sets the load path.
 (package-initialize)
-(global-linum-mode t)
 
 
-;(load-theme 'ubuntu t)
-;(load-theme 'green-phosphor t)
-(load-theme 'hipster t)
-;(load-theme 'monokai t)
-
-
-(add-to-list 'custom-theme-load-path "C:/Users/echristensen/AppData/Roaming/.emacs.d/manual-themes")
-;couldn't get this to work with the package manager
-;(load-theme 'mccarthy t)
-
-
-(setq default-frame-alist '((font . "Consolas 11")
-			    (width . 120)
-			    (height . 45)))
-(set-frame-font "Consolas 11")
-
-
-;(golden-ratio-mode 1)
-
-
-(setq scheme-program-name "petite")
-;M-x run-scheme
-
-(setq racket-racket-program "C:/Program Files/Racket/Racket.exe")
-(setq racket-raco-program "C:/Program Files/Racket/raco.exe")
-
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-
-(set-default 'truncate-lines t)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
- '(column-number-mode t)
- '(cua-mode t nil (cua-base))
- '(custom-safe-themes
-   (quote
-    ("1c50040ec3b3480b1fec3a0e912cac1eb011c27dd16d087d61e72054685de345" "c158c2a9f1c5fcf27598d313eec9f9dceadf131ccd10abc6448004b14984767c" default)))
- '(inhibit-startup-screen t)
- '(nxml-prefer-utf-16-little-to-big-endian-flag nil)
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-(fset 'quotify
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("''," 0 "%d")) arg)))
-
-(global-set-key "\M-q" 'quotify)
-(global-set-key "\C-x\C-u" 'undo)
-
-(setq inferior-lisp-program "clisp")
-;(setq slime-contribs '(slime-fancy))
-
-(defun sizify (ht wt x y)
-  "resize and position the frame"
-  (interactive)
-  (progn
-    (set-frame-size (selected-frame) wt ht)
-    (set-frame-position (selected-frame) x y)))
-
-(defun my-sizify ()
-  (interactive)
-  (sizify 55 234 0 0))
-
-(global-set-key "\M-s\M-s" 'my-sizify)
-;(my-sizify)
-
-
-(defun unix-file ()
-  "Change the current buffer to Latin 1 with Unix line-ends."
-  (interactive)
-  (set-buffer-file-coding-system 'iso-latin-1-unix t))
-
-(defun dos-file ()
-  "Change the current buffer to Latin 1 with DOS line-ends."
-  (interactive)
-  (set-buffer-file-coding-system 'iso-latin-1-dos t))
-
-(defun mac-file ()
-  "Change the current buffer to Latin 1 with Mac line-ends."
-  (interactive)
-  (set-buffer-file-coding-system 'iso-latin-1-mac t))
-
-(defun edit-init ()
-  "Edit .emacs file"
-  (interactive)
-  (find-file "~/.emacs"))
+;; Download the ELPA archive description if needed.
+;; This informs Emacs about the latest versions of all packages, and
+;; makes them available for download.
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
 
 
 
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(unless package-archive-contents (package-refresh-contents))
+
+;; The packages you want installed. You can also install these
+;; manually with M-x package-install
+;; Add in your own as you wish:
+(defvar my-packages
+  '(;; makes handling lisp expressions much, much easier
+    ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
+    paredit
+
+    ;; key bindings and code colorization for Clojure
+    ;; https://github.com/clojure-emacs/clojure-mode
+    clojure-mode
+
+    ;; extra syntax highlighting for clojure
+    clojure-mode-extra-font-locking
+
+    ;; integration with a Clojure REPL
+    ;; https://github.com/clojure-emacs/cider
+    cider
+
+    ;; allow ido usage in as many contexts as possible. see
+    ;; customizations/navigation.el line 23 for a description
+    ;; of ido
+    ido-ubiquitous
+
+    ;; Enhances M-x to allow easier execution of commands. Provides
+    ;; a filterable list of possible commands in the minibuffer
+    ;; http://www.emacswiki.org/emacs/Smex
+    smex
+
+    ;; project navigation
+    projectile
+
+    ;; colorful parenthesis matching
+    rainbow-delimiters
+
+    ;; edit html tags like sexps
+    tagedit
+
+    ;; git integration
+    ;magit
+    ))
+
+
+
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+
+
+
+
+
+
+;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
+;; to load them.
+;;
+;; For example, if you download yaml-mode.el to ~/.emacs.d/vendor,
+;; then you can add the following code to this file:
+;;
+;; (require 'yaml-mode)
+;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+;; 
+;; Adding this code will make Emacs enter yaml mode whenever you open
+;; a .yml file
+(add-to-list 'load-path "~/.emacs.d/vendor")
+
+
+
+
+
+
+;;;;
+;; Customization
+;;;;
+
+;; Add a directory to our load path so that when you `load` things
+;; below, Emacs knows where to look for the corresponding file.
+(add-to-list 'load-path "~/.emacs.d/customizations")
+
+;; Sets up exec-path-from-shell so that Emacs will use the correct
+;; environment variables
+(load "shell-integration.el")
+
+;; These customizations make it easier for you to navigate files,
+;; switch buffers, and choose options from the minibuffer.
+(load "navigation.el")
+
+;; These customizations change the way emacs looks and disable/enable
+;; some user interface elements
+(load "ui.el")
+
+;; These customizations make editing a bit nicer.
+(load "editing.el")
+
+;; Hard-to-categorize customizations
+(load "misc.el")
+
+;; For editing lisps
+(load "elisp-editing.el")
+
+;; Langauage-specific
+(load "setup-clojure.el")
+(load "setup-js.el")
+
+;; Lisps
+(load "lisps.el")
+
+
+;; My custom stuff
+(load "my.el")
+
 
 
 
@@ -133,5 +173,3 @@
 ;;;
 ;;;  Within Emacs, ~ at the beginning of a file name is expanded to your HOME directory,
 ;;;  so you can always find your .emacs file by typing the command C-x C-f ~/.emacs.
-
-
